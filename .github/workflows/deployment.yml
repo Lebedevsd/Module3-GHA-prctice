@@ -1,8 +1,8 @@
 name: Deployment
 on: push
 jobs:
-  prepare:
-    name: Prepare
+  lint:
+    name: Lint
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -11,4 +11,24 @@ jobs:
             node-version: '18'
       - run: |
           npm -g i eslint-cli
+          npm install eslint --save-dev
           npm run lint
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+            node-version: '18'
+      - run: npm run build
+  test:
+    name: Test
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+            node-version: '18'
+      - run: npm run test
